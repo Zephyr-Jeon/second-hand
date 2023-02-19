@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
     "start:dev": "ts-node-dev src/server.ts"
   },
   "keywords": [],
