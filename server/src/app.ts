@@ -1,18 +1,44 @@
+import { ApolloServer, gql } from 'apollo-server-express';
 import express from 'express';
+import { Resolver, buildSchema, Query } from 'type-graphql';
 
-const app = express();
-const router = express.Router();
+// Construct a schema, using GraphQL schema language
+const typeDefs = gql`
+  type Query {
+    hello: String
+  }
+`;
 
-app.use(express.json());
+// Provide resolver functions for your schema fields
+const resolvers = {
+  Query: {
+    hello: () => 'Hello world!',
+  },
+};
 
-router.get('/', (req, res) => {
-  res.send('Home!');
-});
+@Resolver()
+class HelloResolver {
+  @Query(() => String)
+  hello() {
+    return 'Hello Resolver!';
+  }
+}
 
-router.get('/test', (req, res) => {
-  res.send('Test!');
-});
+export const app = express();
 
-app.use(router);
+const startApolloServer = async () => {
+  const apolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+    schema: await buildSchema({
+      resolvers: [HelloResolver],
+      validate: false,
+    }),
+  });
 
-export { app };
+  apolloServer.start().then(() => {
+    apolloServer.applyMiddleware({ app, path: '/' });
+  });
+};
+
+startApolloServer();
