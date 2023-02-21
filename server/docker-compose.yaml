@@ -1,0 +1,10 @@
+services:
+  secondhand-db:
+    container_name: secondhand
+    image: postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: secondhand
+    ports:
+      - '5432:5432'
