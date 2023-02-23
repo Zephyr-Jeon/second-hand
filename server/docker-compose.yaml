@@ -4,9 +4,9 @@ services:
     image: postgres
     # restart: always
     environment:
-      POSTGRES_USER: admin
+      POSTGRES_DB: postgres # if this value is not "postgres", when connecting database with TypeORM, "database <POSTGRES_DB> does not exist" error occurs
+      POSTGRES_USER: postgres # if this value is not "postgres", when connecting database with TypeORM, "role <POSTGRES_USER> does not exist" error occurs
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: secondhand
     ports:
       - '5432:5432'
 
