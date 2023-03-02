@@ -1,44 +1,43 @@
-import { ApolloServer, gql } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import cors from 'cors';
 import express from 'express';
-import { Resolver, buildSchema, Query } from 'type-graphql';
-
-// Construct a schema, using GraphQL schema language
-const typeDefs = gql`
-  type Query {
-    hello: String
-  }
-`;
-
-// Provide resolver functions for your schema fields
-const resolvers = {
-  Query: {
-    hello: () => 'Hello world!',
-  },
-};
-
-@Resolver()
-class HelloResolver {
-  @Query(() => String)
-  hello() {
-    return 'Hello Resolver!';
-  }
-}
+import http from 'http';
+import { buildSchema } from 'type-graphql';
+import { Container } from 'typedi';
+import { UserResolver } from './modules/user/user.resolver';
 
 export const app = express();
 
 const startApolloServer = async () => {
+  // Our httpServer handles incoming requests to our Express app.
+  // Below, we tell Apollo Server to "drain" this httpServer,
+  // enabling our servers to shut down gracefully.
+  const httpServer = http.createServer(app);
+
   const apolloServer = new ApolloServer({
-    typeDefs,
-    resolvers,
-    schema: await buildSchema({
-      resolvers: [HelloResolver],
-      validate: false,
-    }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    schema: await buildGraphQLSchema(),
   });
 
-  apolloServer.start().then(() => {
-    apolloServer.applyMiddleware({ app, path: '/' });
-  });
+  await apolloServer.start();
+
+  app.use(
+    '/',
+    express.json(),
+    cors<cors.CorsRequest>(),
+    expressMiddleware(apolloServer)
+  );
 };
 
 startApolloServer();
+
+function buildGraphQLSchema() {
+  return buildSchema({
+    emitSchemaFile: true,
+    validate: true,
+    resolvers: [UserResolver],
+    container: Container,
+  });
+}
