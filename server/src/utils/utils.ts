@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 class ServerCommonUtils {
   getMoment(momentInput?: moment.MomentInput): moment.Moment {
