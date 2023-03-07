@@ -3,10 +3,13 @@ import { Repository } from 'typeorm';
 import { dataSource } from '../../server';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';
+import { userSignupService } from './services/signup';
 
 @Service()
 export class UserService {
-  private readonly userRepo: Repository<User> = dataSource.getRepository(User);
+  readonly userRepo: Repository<User> = dataSource.getRepository(User);
+
+  create = userSignupService(this);
 
   async findOneById(id: number) {
     const user = await this.userRepo.findOneBy({ id });

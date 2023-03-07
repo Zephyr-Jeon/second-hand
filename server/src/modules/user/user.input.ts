@@ -1,18 +1,23 @@
-import { IsInt, IsString } from 'class-validator';
 import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, InputType } from 'type-graphql';
 
 @InputType()
+export class SignupInput {
+  @Field(() => GraphQLString, { nullable: false })
+  email!: string;
+
+  @Field(() => GraphQLString, { nullable: false })
+  password!: string;
+}
+
+@InputType()
 export class UpdateUserInput {
-  @IsInt()
   @Field(() => GraphQLInt, { nullable: false })
-  id!: any;
+  id!: number;
 
-  @IsString()
   @Field(() => GraphQLString, { nullable: true })
-  email?: any;
+  email?: string;
 
-  @IsString()
   @Field(() => GraphQLString, { nullable: true })
-  password?: any;
+  password?: string;
 }

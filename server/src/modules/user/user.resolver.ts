@@ -2,13 +2,18 @@ import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { Service } from 'typedi';
 import { SingleIDInput } from '../common/input';
 import { User } from './user.entity';
-import { UpdateUserInput } from './user.input';
+import { SignupInput, UpdateUserInput } from './user.input';
 import { UserService } from './user.service';
 
 @Service()
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
+
+  @Mutation((returns) => User)
+  async signup(@Arg('input') input: SignupInput) {
+    return await this.userService.create(input);
+  }
 
   @Query((returns) => User)
   async getUserById(@Arg('input') input: SingleIDInput) {
