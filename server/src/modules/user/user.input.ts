@@ -1,8 +1,9 @@
 import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, InputType } from 'type-graphql';
+import { IUserSignupInput } from '../../validator/inputTypes';
 
 @InputType()
-export class SignupInput {
+export class SignupInput implements IUserSignupInput {
   @Field(() => GraphQLString, { nullable: false })
   email!: string;
 

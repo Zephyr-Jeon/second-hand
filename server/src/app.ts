@@ -6,7 +6,7 @@ import express from 'express';
 import http from 'http';
 import { buildSchema } from 'type-graphql';
 import { Container } from 'typedi';
-import { UserResolver } from './modules/user/user.resolver';
+import { Validator } from './validator/Validator';
 
 export const app = express();
 
@@ -36,8 +36,16 @@ startApolloServer();
 function buildGraphQLSchema() {
   return buildSchema({
     emitSchemaFile: true,
-    validate: true,
-    resolvers: [UserResolver],
+    validate,
+    resolvers: [__dirname + '/modules/**/*.resolver.ts'],
     container: Container,
   });
+}
+
+function validate(arg: unknown, argType: unknown) {
+  if (!arg) {
+    return;
+  }
+
+  Validator.validateInput(arg, argType);
 }
