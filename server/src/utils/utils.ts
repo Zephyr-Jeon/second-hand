@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-class ServerCommonUtils {
+export class ServerCommonUtils {
   getMoment(momentInput?: moment.MomentInput): moment.Moment {
     return moment(momentInput);
   }
@@ -13,5 +13,3 @@ class ServerCommonUtils {
     return this.getMoment().format('YYYY-MM-DD');
   }
 }
-
-export const Utils = new ServerCommonUtils();

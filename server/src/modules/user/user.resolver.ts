@@ -1,11 +1,11 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import { Service } from 'typedi';
+import { DI } from '../../di/DIContainer';
 import { SingleIDInput } from '../common/input';
 import { User } from './user.entity';
 import { SignupInput, UpdateUserInput } from './user.input';
 import { UserService } from './user.service';
 
-@Service()
+@DI.register()
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}

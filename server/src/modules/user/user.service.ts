@@ -1,13 +1,11 @@
-import { Service } from 'typedi';
-import { Repository } from 'typeorm';
-import { dataSource } from '../../server';
+import { DI } from '../../di/DIContainer';
+import { userSignupService } from './services/signup';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';
-import { userSignupService } from './services/signup';
 
-@Service()
+@DI.register()
 export class UserService {
-  readonly userRepo: Repository<User> = dataSource.getRepository(User);
+  readonly userRepo = DI.db.getRepository(User);
 
   create = userSignupService(this);
 
