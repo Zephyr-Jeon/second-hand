@@ -1,4 +1,4 @@
-import { DI } from '../../di/DIContainer';
+import { DI } from '../../di/DI';
 import { userSignupService } from './services/signup';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';

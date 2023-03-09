@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { DI } from '../../di/DIContainer';
+import { DI } from '../../di/DI';
 import { ICommonEntity } from './interfaces';
 
 // Common entity that most entities inherent

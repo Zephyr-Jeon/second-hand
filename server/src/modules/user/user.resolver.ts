@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import { DI } from '../../di/DIContainer';
+import { DI } from '../../di/DI';
 import { SingleIDInput } from '../common/input';
 import { User } from './user.entity';
 import { SignupInput, UpdateUserInput } from './user.input';

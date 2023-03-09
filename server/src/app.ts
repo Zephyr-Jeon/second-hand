@@ -7,7 +7,7 @@ import http from 'http';
 import { buildSchema } from 'type-graphql';
 import { DataSource } from 'typeorm';
 import { IServerConfigs } from './config/config.interface';
-import { DI } from './di/DIContainer';
+import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
@@ -19,15 +19,15 @@ export class AppServer {
 
   constructor(private configs: IServerConfigs) {
     this.db = new DataSource({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'password',
-      database: 'postgres',
-      dropSchema: true,
-      synchronize: true,
-      entities: ['./src/modules/**/*.entity.ts'],
+      type: configs.TYPEORM_TYPE,
+      host: configs.TYPEORM_HOST,
+      port: configs.TYPEORM_PORT,
+      username: configs.TYPEORM_USERNAME,
+      password: configs.TYPEORM_PASSWORD,
+      database: configs.TYPEORM_DATABASE,
+      dropSchema: configs.TYPEORM_DROP_SCHEMA,
+      synchronize: configs.TYPEORM_SYNCHRONIZE,
+      entities: configs.TYPEORM_ENTITIES,
     });
   }
 
@@ -42,8 +42,8 @@ export class AppServer {
 
     await this.runApolloServer();
 
-    this.app.listen({ port: 3000 }, () => {
-      console.log(`🚀 Server ready at http://localhost:3000`);
+    this.app.listen({ port: this.configs.PORT }, () => {
+      console.log(`🚀 Server ready at ${this.configs.SERVER_URL}`);
     });
   }
 
@@ -100,10 +100,10 @@ export class AppServer {
 
   private buildGraphQLSchema() {
     return buildSchema({
-      emitSchemaFile: true,
       validate: this.validate,
-      resolvers: [__dirname + '/modules/**/*.resolver.ts'],
       container: this.di.container,
+      resolvers: this.configs.TYPEGQL_RESOLVERS,
+      emitSchemaFile: this.configs.TYPEGQL_EMIT_SCHEMA_FILE,
     });
   }
 
