@@ -6,6 +6,7 @@ import { UpdateUserInput } from './user.input';
 @DI.register()
 export class UserService {
   readonly userRepo = DI.db.getRepository(User);
+  readonly utils = DI.utils;
 
   create = userSignupService(this);
 
