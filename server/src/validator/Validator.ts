@@ -16,10 +16,7 @@ export class Validator {
           user.signup.parse(input);
           break;
         default:
-          throw new GQLError({
-            message: 'Input type undefined',
-            code: ERROR_CODES.INPUT_TYPE_UNDEFINED,
-          });
+          throw new GQLError({ code: ERROR_CODES.INPUT_TYPE_UNDEFINED });
       }
     } catch (e) {
       throw this.formatError(e);
@@ -35,12 +32,11 @@ export class Validator {
       const messages = error.issues.map((issue) => issue.message);
 
       return new GQLError({
-        message: 'Invalid input',
         code: ERROR_CODES.INVALID_INPUT,
         data: { messages },
       });
     }
 
-    return new GQLError({ message: 'Unknown input validation error' });
+    return new GQLError({ code: ERROR_CODES.UNKNOWN, data: { error } });
   }
 }
