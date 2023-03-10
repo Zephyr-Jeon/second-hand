@@ -2,7 +2,7 @@ import { Arg, Mutation, Query, Resolver } from 'type-graphql';
 import { DI } from '../../di/DI';
 import { SingleIDInput } from '../common/input';
 import { User } from './user.entity';
-import { SignupInput, UpdateUserInput } from './user.input';
+import { SigninInput, SignupInput, UpdateUserInput } from './user.input';
 import { UserService } from './user.service';
 
 @DI.register()
@@ -13,6 +13,11 @@ export class UserResolver {
   @Mutation((returns) => User)
   async signup(@Arg('input') input: SignupInput) {
     return await this.userService.create(input);
+  }
+
+  @Mutation((returns) => User)
+  async signin(@Arg('input') input: SigninInput) {
+    return await this.userService.signin(input);
   }
 
   @Query((returns) => User)

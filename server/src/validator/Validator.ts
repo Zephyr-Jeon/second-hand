@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
-import { SignupInput } from '../modules/user/user.input';
+import { SigninInput, SignupInput } from '../modules/user/user.input';
 import { inputSchema } from './inputSchema';
 
 export class Validator {
@@ -14,6 +14,9 @@ export class Validator {
       switch (inputType) {
         case SignupInput:
           user.signup.parse(input);
+          break;
+        case SigninInput:
+          user.signin.parse(input);
           break;
         default:
           throw new GQLError({ code: ERROR_CODES.INPUT_TYPE_UNDEFINED });

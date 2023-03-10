@@ -10,5 +10,9 @@ export const inputSchema = {
         .min(8, { message: 'Password must longer than 8 charactors' })
         .max(20, { message: 'Password length cannot exceed 20 characters' }),
     }),
+    signin: z.object({
+      email: z.string().email(),
+      password: z.string().min(8).max(20),
+    }),
   },
 };
