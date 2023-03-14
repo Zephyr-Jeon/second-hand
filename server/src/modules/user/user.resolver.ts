@@ -1,5 +1,6 @@
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { DI } from '../../di/DI';
+import { ICTX } from '../../interface/serverInterfaces';
 import { SingleIDInput } from '../common/input';
 import { User } from './user.entity';
 import { SigninInput, SignupInput, UpdateUserInput } from './user.input';
@@ -11,8 +12,8 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation((returns) => User)
-  async signup(@Arg('input') input: SignupInput) {
-    return await this.userService.create(input);
+  async signup(@Arg('input') input: SignupInput, @Ctx() ctx: ICTX) {
+    return await this.userService.create(input, ctx);
   }
 
   @Mutation((returns) => User)

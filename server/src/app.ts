@@ -1,24 +1,29 @@
 import { ApolloServer } from '@apollo/server';
-import { expressMiddleware } from '@apollo/server/express4';
+import {
+  ExpressContextFunctionArgument,
+  expressMiddleware,
+} from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import http from 'http';
-import { buildSchema } from 'type-graphql';
-import { DataSource } from 'typeorm';
+import * as TypeGraphQL from 'type-graphql';
+import * as TypeORM from 'typeorm';
 import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
+import { ICTX } from './interface/serverInterfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
 
 export class AppServer {
   private app = express();
-  private db: DataSource;
+  private db: TypeORM.DataSource;
   private di = DI;
 
   constructor(private configs: IServerConfigs) {
-    this.db = new DataSource({
+    this.db = new TypeORM.DataSource({
       type: configs.TYPEORM_TYPE,
       host: configs.TYPEORM_HOST,
       port: configs.TYPEORM_PORT,
@@ -78,7 +83,23 @@ export class AppServer {
   }
 
   private useMiddlewares() {
-    this.app.use('/', express.json(), cors<cors.CorsRequest>());
+    // The default cors configuration is the equivalent of
+    // {
+    //   "origin": "*",
+    //   "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    //   "preflightContinue": false,
+    //   "optionsSuccessStatus": 204
+    // }
+    this.app.use(
+      cors({
+        // origin: ['https://studio.apollographql.com', ' http://localhost:8082'],
+        // credentials: true,
+      })
+    );
+
+    // this.app.set('trust proxy', 1);
+    this.app.use(express.json());
+    this.app.use(cookieParser('testSecret'));
   }
 
   private async runApolloServer() {
@@ -88,18 +109,21 @@ export class AppServer {
     const httpServer = http.createServer(this.app);
 
     const apolloServer = new ApolloServer({
-      plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+      plugins: [
+        ApolloServerPluginDrainHttpServer({ httpServer }),
+        // ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
+      ],
       schema: await this.buildGraphQLSchema(),
     });
 
     await apolloServer.start();
 
-    this.app.use('/', expressMiddleware(apolloServer));
+    this.app.use(expressMiddleware(apolloServer, { context: this.context }));
     console.log('Apollo server has started');
   }
 
   private buildGraphQLSchema() {
-    return buildSchema({
+    return TypeGraphQL.buildSchema({
       validate: this.validate,
       container: this.di.container,
       resolvers: this.configs.TYPEGQL_RESOLVERS,
@@ -108,10 +132,16 @@ export class AppServer {
   }
 
   private validate(arg: unknown, argType: unknown) {
-    if (!arg) {
-      return;
+    if (arg) {
+      Validator.validateInput(arg, argType);
     }
+  }
 
-    Validator.validateInput(arg, argType);
+  // Each resolver recieves context object that this function returns
+  private async context({
+    req,
+    res,
+  }: ExpressContextFunctionArgument): Promise<ICTX> {
+    return { req, res };
   }
 }
