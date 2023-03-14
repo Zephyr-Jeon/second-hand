@@ -1,5 +1,6 @@
 import { DI } from '../../di/DI';
 import { userSigninService } from './services/signin';
+import { userSignoutService } from './services/signout';
 import { userSignupService } from './services/signup';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';
@@ -11,6 +12,7 @@ export class UserService {
 
   readonly create = userSignupService(this);
   readonly signin = userSigninService(this);
+  readonly signout = userSignoutService(this);
 
   async findOneById(id: number) {
     const user = await this.userRepo.findOneBy({ id });

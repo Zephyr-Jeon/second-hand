@@ -10,8 +10,14 @@ scalar DateTime
 
 type Mutation {
   signin(input: SigninInput!): User!
+  signout: OkResponse!
   signup(input: SignupInput!): User!
   updateUser(input: UpdateUserInput!): User!
+}
+
+"""Simple ok response"""
+type OkResponse {
+  ok: Float!
 }
 
 type Query {

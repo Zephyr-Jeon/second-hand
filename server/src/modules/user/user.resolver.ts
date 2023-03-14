@@ -2,6 +2,7 @@ import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { DI } from '../../di/DI';
 import { ICTX } from '../../interface/serverInterfaces';
 import { SingleIDInput } from '../common/input';
+import { OkResponse } from '../common/output';
 import { User } from './user.entity';
 import { SigninInput, SignupInput, UpdateUserInput } from './user.input';
 import { UserService } from './user.service';
@@ -17,8 +18,13 @@ export class UserResolver {
   }
 
   @Mutation((returns) => User)
-  async signin(@Arg('input') input: SigninInput) {
-    return await this.userService.signin(input);
+  async signin(@Arg('input') input: SigninInput, @Ctx() ctx: ICTX) {
+    return await this.userService.signin(input, ctx);
+  }
+
+  @Mutation((returns) => OkResponse)
+  async signout(@Ctx() ctx: ICTX) {
+    return await this.userService.signout(ctx);
   }
 
   @Query((returns) => User)

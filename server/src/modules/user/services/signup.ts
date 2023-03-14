@@ -21,12 +21,10 @@ export const userSignupService =
 
     const user = await userRepo.save({ email, password: saltedHashPassword });
 
-    // HttpOnly attribute is inaccessible to the JavaScript
-    // Secure attribute is only sent to the server with an encrypted request over the HTTPS protocol.
     ctx.res.cookie('token', 'testToken', {
       signed: true,
-      secure: true,
-      httpOnly: true,
+      secure: true, // inaccessible to the JavaScript
+      httpOnly: true, // only sent to the server with an encrypted request over the HTTPS protocol.
     });
 
     return user;
