@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
-import { SigninInput, SignupInput } from '../modules/user/user.input';
+import { SigninInput, SignupInput } from '../modules/auth/auth.input';
 import { inputSchema } from './inputSchema';
 
 export class Validator {

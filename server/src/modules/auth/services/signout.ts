@@ -1,11 +1,9 @@
 import { ICTX } from '../../../types/interfaces';
 import { CommonResponse } from '../../common/CommonResponse';
-import { UserService } from '../user.service';
+import { AuthService } from '../auth.service';
 
-export const userSignoutService =
-  (userService: UserService) => async (ctx: ICTX) => {
-    console.log(13, ctx.req.signedCookies);
-
+export const authSignoutService =
+  (authService: AuthService) => async (ctx: ICTX) => {
     ctx.res.clearCookie('token');
 
     return CommonResponse.ok();

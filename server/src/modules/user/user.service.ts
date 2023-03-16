@@ -1,9 +1,4 @@
-import { CookieOptions } from 'express';
 import { DI } from '../../di/DI';
-import { ICTX } from '../../types/interfaces';
-import { userSigninService } from './services/signin';
-import { userSignoutService } from './services/signout';
-import { userSignupService } from './services/signup';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';
 
@@ -11,28 +6,6 @@ import { UpdateUserInput } from './user.input';
 export class UserService {
   readonly userRepo = DI.db.getRepository(User);
   readonly utils = DI.utils;
-
-  readonly create = userSignupService(this);
-  readonly signin = userSigninService(this);
-  readonly signout = userSignoutService(this);
-
-  async createToken(user: User) {
-    return this.utils.signJWT({ userId: user.id }, 'jwtSecret', {
-      expiresIn: 10,
-    });
-  }
-
-  setTokenInCookie(
-    ctx: ICTX,
-    token: string,
-    options: CookieOptions = {
-      signed: true,
-      secure: true, // inaccessible to the JavaScript
-      httpOnly: true, // only sent to the server with an encrypted request over the HTTPS protocol.
-    }
-  ) {
-    return ctx.res.cookie('token', token, options);
-  }
 
   async findOneById(id: number) {
     const user = await this.userRepo.findOneBy({ id });
