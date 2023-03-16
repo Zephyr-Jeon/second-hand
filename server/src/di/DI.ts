@@ -1,5 +1,8 @@
 import Container, { Service } from 'typedi';
 import { DataSource } from 'typeorm';
+import { IServerConfigs } from '../config/config.interface';
+import { User } from '../modules/user/user.entity';
+import { I_SERVER_ENUMS } from '../types/enums';
 import { ServerCommonUtils } from '../utils/utils';
 import { DI_KEYS } from './DIKeys';
 
@@ -20,7 +23,19 @@ export class DI {
     return this.container.get(DI_KEYS.DB);
   }
 
+  static get getUserRepo() {
+    return this.db.getRepository(User);
+  }
+
   static get utils(): ServerCommonUtils {
     return this.container.get(DI_KEYS.UTILS);
+  }
+
+  static get serverEnums(): I_SERVER_ENUMS {
+    return this.container.get(DI_KEYS.SERVER_ENUMS);
+  }
+
+  static get serverConfigs(): IServerConfigs {
+    return this.container.get(DI_KEYS.SERVER_CONFIGS);
   }
 }

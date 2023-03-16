@@ -2,12 +2,19 @@ import { NonEmptyArray } from 'type-graphql';
 
 export interface IServerConfigs
   extends IServerBaseConfigs,
+    IJWTConfigs,
     ITypeORMConfigs,
     ITypeGraphQLConfigs {}
 
 export interface IServerBaseConfigs {
   PORT: number;
   SERVER_URL: string;
+  COOKIE_SECRET: string;
+}
+
+export interface IJWTConfigs {
+  JWT_SECRET: string;
+  JWT_EXPERATION_TIME: number;
 }
 
 export interface ITypeORMConfigs {

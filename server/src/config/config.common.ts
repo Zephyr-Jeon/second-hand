@@ -1,4 +1,5 @@
 import {
+  IJWTConfigs,
   IServerBaseConfigs,
   IServerConfigs,
   ITypeGraphQLConfigs,
@@ -8,6 +9,12 @@ import {
 const BASE_CONFIGS: IServerBaseConfigs = {
   PORT: 8082,
   SERVER_URL: 'http://localhost:8082',
+  COOKIE_SECRET: process.env.COOKIE_SECRET!,
+};
+
+const JWT_CONFIGS: IJWTConfigs = {
+  JWT_SECRET: process.env.JWT_SECRET!,
+  JWT_EXPERATION_TIME: 24 * 60 * 60,
 };
 
 const TYPEORM_CONFIGS: ITypeORMConfigs = {
@@ -30,6 +37,7 @@ const TYPEGQL_CONFIGS: ITypeGraphQLConfigs = {
 export const COMMON_SERVER_CONFIGS: IServerConfigs = Object.assign(
   {},
   BASE_CONFIGS,
+  JWT_CONFIGS,
   TYPEORM_CONFIGS,
   TYPEGQL_CONFIGS
 );

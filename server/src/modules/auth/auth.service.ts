@@ -8,7 +8,9 @@ import { authSignupService } from './services/signup';
 
 @DI.register()
 export class AuthService {
-  readonly userRepo = DI.db.getRepository(User);
+  readonly userRepo = DI.getUserRepo;
+  readonly serverEnums = DI.serverEnums;
+  readonly serverConfigs = DI.serverConfigs;
   readonly utils = DI.utils;
 
   readonly signup = authSignupService(this);
@@ -16,9 +18,11 @@ export class AuthService {
   readonly signout = authSignoutService(this);
 
   async createToken(user: User) {
-    return this.utils.signJWT({ userId: user.id }, 'jwtSecret', {
-      expiresIn: 10,
-    });
+    return this.utils.signJWT(
+      { userId: user.id },
+      this.serverConfigs.JWT_SECRET,
+      { expiresIn: this.serverConfigs.JWT_EXPERATION_TIME }
+    );
   }
 
   setTokenInCookie(
@@ -30,6 +34,10 @@ export class AuthService {
       httpOnly: true, // only sent to the server with an encrypted request over the HTTPS protocol.
     }
   ) {
-    return ctx.res.cookie('token', token, options);
+    return ctx.res.cookie(this.serverEnums.COOKIE_NAMES.TOKEN, token, options);
+  }
+
+  clearTokenInCookie(ctx: ICTX) {
+    return ctx.res.clearCookie(this.serverEnums.COOKIE_NAMES.TOKEN);
   }
 }

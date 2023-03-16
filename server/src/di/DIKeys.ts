@@ -1,4 +1,6 @@
 export enum DI_KEYS {
   DB = 'DB',
   UTILS = 'UTILS',
+  SERVER_ENUMS = 'SERVER_ENUMS',
+  SERVER_CONFIGS = 'SERVER_CONFIGS',
 }

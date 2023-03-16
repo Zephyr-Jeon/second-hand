@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 
 export const authSignoutService =
   (authService: AuthService) => async (ctx: ICTX) => {
-    ctx.res.clearCookie('token');
+    authService.clearTokenInCookie(ctx);
 
     return CommonResponse.ok();
   };

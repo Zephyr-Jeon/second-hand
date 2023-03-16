@@ -13,6 +13,7 @@ import * as TypeORM from 'typeorm';
 import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
+import { SERVER_ENUMS } from './types/enums';
 import { ICTX } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
@@ -55,6 +56,8 @@ export class AppServer {
   private setDIs() {
     this.di.set(DI_KEYS.DB, this.db);
     this.di.set(DI_KEYS.UTILS, new ServerCommonUtils());
+    this.di.set(DI_KEYS.SERVER_ENUMS, SERVER_ENUMS);
+    this.di.set(DI_KEYS.SERVER_CONFIGS, this.configs);
   }
 
   private async initDB() {
@@ -99,7 +102,7 @@ export class AppServer {
 
     // this.app.set('trust proxy', 1);
     this.app.use(express.json());
-    this.app.use(cookieParser('testSecret'));
+    this.app.use(cookieParser(this.configs.COOKIE_SECRET));
   }
 
   private async runApolloServer() {
@@ -146,16 +149,17 @@ export class AppServer {
     req,
     res,
   }: ExpressContextFunctionArgument): Promise<ICTX> {
-    if (req.signedCookies.token) {
+    const token = req.signedCookies[this.di.serverEnums.COOKIE_NAMES.TOKEN];
+    if (token) {
       try {
         const payload = await this.di.utils.verifyJWT(
-          req.signedCookies.token,
-          'jwtSecret'
+          token,
+          this.configs.JWT_SECRET
         );
         console.log(155, payload);
       } catch (e) {
         console.log(e);
-        res.clearCookie('token');
+        res.clearCookie(this.di.serverEnums.COOKIE_NAMES.TOKEN);
       }
     }
 
