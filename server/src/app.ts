@@ -14,7 +14,7 @@ import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
 import { SERVER_ENUMS } from './types/enums';
-import { ICTX } from './types/interfaces';
+import { ICTX, IJWTPayload } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
 
@@ -149,20 +149,23 @@ export class AppServer {
     req,
     res,
   }: ExpressContextFunctionArgument): Promise<ICTX> {
+    const ctx: ICTX = { req, res };
     const token = req.signedCookies[this.di.serverEnums.COOKIE_NAMES.TOKEN];
+
     if (token) {
       try {
-        const payload = await this.di.utils.verifyJWT(
+        const payload = (await this.di.utils.verifyJWT(
           token,
           this.configs.JWT_SECRET
-        );
-        console.log(155, payload);
+        )) as IJWTPayload;
+
+        ctx.userId = payload.userId;
       } catch (e) {
-        console.log(e);
         res.clearCookie(this.di.serverEnums.COOKIE_NAMES.TOKEN);
+        console.log(`Internal JWT verification error: ${e}`);
       }
     }
 
-    return { req, res };
+    return ctx;
   }
 }

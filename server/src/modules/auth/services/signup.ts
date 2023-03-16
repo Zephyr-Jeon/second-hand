@@ -19,7 +19,7 @@ export const authSignupService =
 
     const user = await userRepo.save({ email, password: saltedHashPassword });
 
-    const token = await authService.createToken(user);
+    const token = await authService.createToken({ userId: user.id });
 
     authService.setTokenInCookie(ctx, token);
 

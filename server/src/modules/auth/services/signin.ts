@@ -21,7 +21,7 @@ export const authSigninService =
       throw new GQLError({ code: ERROR_CODES.NOT_FOUND });
     }
 
-    const token = await authService.createToken(user);
+    const token = await authService.createToken({ userId: user.id });
 
     authService.setTokenInCookie(ctx, token);
 

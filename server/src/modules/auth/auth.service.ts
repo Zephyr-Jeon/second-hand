@@ -1,6 +1,6 @@
 import { CookieOptions } from 'express';
 import { DI } from '../../di/DI';
-import { ICTX } from '../../types/interfaces';
+import { ICTX, IJWTPayload } from '../../types/interfaces';
 import { User } from '../user/user.entity';
 import { authSigninService } from './services/signin';
 import { authSignoutService } from './services/signout';
@@ -17,9 +17,9 @@ export class AuthService {
   readonly signin = authSigninService(this);
   readonly signout = authSignoutService(this);
 
-  async createToken(user: User) {
+  async createToken(payload: IJWTPayload) {
     return this.utils.signJWT(
-      { userId: user.id },
+      { userId: payload },
       this.serverConfigs.JWT_SECRET,
       { expiresIn: this.serverConfigs.JWT_EXPERATION_TIME }
     );
