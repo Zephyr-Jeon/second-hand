@@ -1,6 +1,6 @@
 import { ERROR_CODES } from '../../../error/ErrorCodes';
 import { GQLError } from '../../../error/GQLError';
-import { ICTX } from '../../../interface/serverInterfaces';
+import { ICTX } from '../../../types/interfaces';
 import { SigninInput } from '../user.input';
 import { UserService } from '../user.service';
 

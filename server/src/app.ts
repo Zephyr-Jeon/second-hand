@@ -13,7 +13,7 @@ import * as TypeORM from 'typeorm';
 import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
-import { ICTX } from './interface/serverInterfaces';
+import { ICTX } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
 
@@ -118,7 +118,11 @@ export class AppServer {
 
     await apolloServer.start();
 
-    this.app.use(expressMiddleware(apolloServer, { context: this.context }));
+    this.app.use(
+      expressMiddleware(apolloServer, {
+        context: async (ctx) => this.context(ctx),
+      })
+    );
     console.log('Apollo server has started');
   }
 
@@ -142,6 +146,19 @@ export class AppServer {
     req,
     res,
   }: ExpressContextFunctionArgument): Promise<ICTX> {
+    if (req.signedCookies.token) {
+      try {
+        const payload = await this.di.utils.verifyJWT(
+          req.signedCookies.token,
+          'jwtSecret'
+        );
+        console.log(155, payload);
+      } catch (e) {
+        console.log(e);
+        res.clearCookie('token');
+      }
+    }
+
     return { req, res };
   }
 }

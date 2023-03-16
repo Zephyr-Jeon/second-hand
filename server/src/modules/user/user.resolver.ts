@@ -1,6 +1,6 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { DI } from '../../di/DI';
-import { ICTX } from '../../interface/serverInterfaces';
+import { ICTX } from '../../types/interfaces';
 import { SingleIDInput } from '../common/input';
 import { OkResponse } from '../common/output';
 import { User } from './user.entity';

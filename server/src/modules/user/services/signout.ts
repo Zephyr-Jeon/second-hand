@@ -1,4 +1,4 @@
-import { ICTX } from '../../../interface/serverInterfaces';
+import { ICTX } from '../../../types/interfaces';
 import { CommonResponse } from '../../common/CommonResponse';
 import { UserService } from '../user.service';
 

@@ -1,4 +1,5 @@
 import { randomBytes, scrypt, timingSafeEqual } from 'crypto';
+import * as jwt from 'jsonwebtoken';
 import moment from 'moment-timezone';
 import { promisify } from 'util';
 
@@ -35,5 +36,33 @@ export class ServerCommonUtils {
     )) as Buffer;
 
     return timingSafeEqual(storedPasswordBuffer, suppliedPasswordBuffer);
+  }
+
+  async signJWT(
+    payload: string | Buffer | object,
+    secret: jwt.Secret,
+    options: jwt.SignOptions = {}
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      jwt.sign(payload, secret, options, (err, token) => {
+        if (token) {
+          resolve(token);
+        } else {
+          reject(err || 'Unknown JWT sign error');
+        }
+      });
+    });
+  }
+
+  async verifyJWT(token: string, secret: jwt.Secret) {
+    return new Promise((resolve, reject) => {
+      jwt.verify(token, secret, (err, payload) => {
+        if (payload) {
+          resolve(payload);
+        } else {
+          reject(err || 'Unknown JWT verify error');
+        }
+      });
+    });
   }
 }
