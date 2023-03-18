@@ -19,9 +19,11 @@ import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
 
 export class AppServer {
-  private app = express();
   private db: TypeORM.DataSource;
+  private app = express();
   private di = DI;
+  private httpServer: http.Server | null = null;
+  public apolloServer: ApolloServer | null = null;
 
   constructor(private configs: IServerConfigs) {
     this.db = new TypeORM.DataSource({
@@ -48,9 +50,25 @@ export class AppServer {
 
     await this.runApolloServer();
 
-    this.app.listen({ port: this.configs.PORT }, () => {
+    this.httpServer = this.app.listen({ port: this.configs.PORT }, () => {
       console.log(`🚀 Server ready at ${this.configs.SERVER_URL}`);
     });
+  }
+
+  async stop() {
+    await this.db.destroy();
+    this.httpServer?.close?.();
+  }
+
+  async resetDB() {
+    if (this.db) {
+      this.db.dropDatabase();
+      this.db.synchronize();
+    }
+  }
+
+  get url() {
+    return this.configs.SERVER_URL;
   }
 
   private setDIs() {
@@ -111,7 +129,7 @@ export class AppServer {
     // enable servers to shut down gracefully.
     const httpServer = http.createServer(this.app);
 
-    const apolloServer = new ApolloServer({
+    this.apolloServer = new ApolloServer({
       plugins: [
         ApolloServerPluginDrainHttpServer({ httpServer }),
         // ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
@@ -119,10 +137,10 @@ export class AppServer {
       schema: await this.buildGraphQLSchema(),
     });
 
-    await apolloServer.start();
+    await this.apolloServer.start();
 
     this.app.use(
-      expressMiddleware(apolloServer, {
+      expressMiddleware(this.apolloServer, {
         context: async (ctx) => this.context(ctx),
       })
     );
