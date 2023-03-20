@@ -9,8 +9,8 @@
     "db": "docker-compose up",
     "dev": "NODE_ENV=development ts-node-dev src/server.ts",
     "prod": "npm run build && NODE_ENV=production node dist/server.js",
-    "test": "NODE_ENV=test jest --no-cache",
-    "test:watch": "NODE_ENV=test jest --watchAll --no-cache"
+    "test": "NODE_ENV=test jest --runInBand --no-cache",
+    "test:watch": "NODE_ENV=test jest --runInBand --watchAll --no-cache"
   },
   "keywords": [],
   "author": "",

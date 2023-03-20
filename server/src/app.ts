@@ -13,20 +13,21 @@ import * as TypeORM from 'typeorm';
 import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
+import { formatError } from './error/GQLError';
 import { SERVER_ENUMS } from './types/enums';
 import { ICTX, IJWTPayload } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
 
 export class AppServer {
-  private db: TypeORM.DataSource;
-  private app = express();
-  private di = DI;
+  private _di = DI;
+  private _db: TypeORM.DataSource;
   private httpServer: http.Server | null = null;
-  public apolloServer: ApolloServer | null = null;
+  private apolloServer: ApolloServer | null = null;
+  private app = express();
 
   constructor(private configs: IServerConfigs) {
-    this.db = new TypeORM.DataSource({
+    this._db = new TypeORM.DataSource({
       type: configs.TYPEORM_TYPE,
       host: configs.TYPEORM_HOST,
       port: configs.TYPEORM_PORT,
@@ -56,26 +57,23 @@ export class AppServer {
   }
 
   async stop() {
-    await this.db.destroy();
+    await this._db.destroy();
     this.httpServer?.close?.();
   }
 
-  async resetDB() {
-    if (this.db) {
-      this.db.dropDatabase();
-      this.db.synchronize();
-    }
+  get db() {
+    return this._db;
   }
 
-  get url() {
-    return this.configs.SERVER_URL;
+  get di() {
+    return this._di;
   }
 
   private setDIs() {
-    this.di.set(DI_KEYS.DB, this.db);
-    this.di.set(DI_KEYS.UTILS, new ServerCommonUtils());
-    this.di.set(DI_KEYS.SERVER_ENUMS, SERVER_ENUMS);
-    this.di.set(DI_KEYS.SERVER_CONFIGS, this.configs);
+    this._di.set(DI_KEYS.DB, this._db);
+    this._di.set(DI_KEYS.UTILS, new ServerCommonUtils());
+    this._di.set(DI_KEYS.SERVER_ENUMS, SERVER_ENUMS);
+    this._di.set(DI_KEYS.SERVER_CONFIGS, this.configs);
   }
 
   private async initDB() {
@@ -83,7 +81,7 @@ export class AppServer {
 
     while (retries > -1) {
       try {
-        await this.db.initialize();
+        await this._db.initialize();
 
         console.log('Data Source has been initialized');
 
@@ -130,11 +128,12 @@ export class AppServer {
     const httpServer = http.createServer(this.app);
 
     this.apolloServer = new ApolloServer({
+      schema: await this.buildGraphQLSchema(),
+      formatError,
       plugins: [
         ApolloServerPluginDrainHttpServer({ httpServer }),
         // ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
       ],
-      schema: await this.buildGraphQLSchema(),
     });
 
     await this.apolloServer.start();
@@ -150,7 +149,7 @@ export class AppServer {
   private buildGraphQLSchema() {
     return TypeGraphQL.buildSchema({
       validate: this.validate,
-      container: this.di.container,
+      container: this._di.container,
       resolvers: this.configs.TYPEGQL_RESOLVERS,
       emitSchemaFile: this.configs.TYPEGQL_EMIT_SCHEMA_FILE,
     });
@@ -168,18 +167,18 @@ export class AppServer {
     res,
   }: ExpressContextFunctionArgument): Promise<ICTX> {
     const ctx: ICTX = { req, res };
-    const token = req.signedCookies[this.di.serverEnums.COOKIE_NAMES.TOKEN];
+    const token = req.signedCookies[this._di.serverEnums.COOKIE_NAMES.TOKEN];
 
     if (token) {
       try {
-        const payload = (await this.di.utils.verifyJWT(
+        const payload = (await this._di.utils.verifyJWT(
           token,
           this.configs.JWT_SECRET
         )) as IJWTPayload;
 
         ctx.userId = payload.userId;
       } catch (e) {
-        res.clearCookie(this.di.serverEnums.COOKIE_NAMES.TOKEN);
+        res.clearCookie(this._di.serverEnums.COOKIE_NAMES.TOKEN);
         console.log(`Internal JWT verification error: ${e}`);
       }
     }

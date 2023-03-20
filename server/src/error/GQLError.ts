@@ -1,4 +1,5 @@
-import { GraphQLError } from 'graphql';
+import { ApolloServerErrorCode } from '@apollo/server/errors';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { ERROR_CODES } from './ErrorCodes';
 import { ERROR_MESSAGES } from './ErrorMessages';
 
@@ -18,3 +19,14 @@ export class GQLError extends GraphQLError {
     });
   }
 }
+
+export const formatError = (error: GraphQLFormattedError) => {
+  switch (error.extensions?.code) {
+    case ApolloServerErrorCode.BAD_USER_INPUT:
+      error.extensions.code = ERROR_CODES.INVALID_INPUT;
+      error.extensions.message = ERROR_MESSAGES[ERROR_CODES.INVALID_INPUT];
+      break;
+  }
+
+  return error;
+};

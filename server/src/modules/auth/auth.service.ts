@@ -18,11 +18,9 @@ export class AuthService {
   readonly signout = authSignoutService(this);
 
   async createToken(payload: IJWTPayload) {
-    return this.utils.signJWT(
-      { userId: payload },
-      this.serverConfigs.JWT_SECRET,
-      { expiresIn: this.serverConfigs.JWT_EXPERATION_TIME }
-    );
+    return this.utils.signJWT(payload, this.serverConfigs.JWT_SECRET, {
+      expiresIn: this.serverConfigs.JWT_EXPERATION_TIME,
+    });
   }
 
   setTokenInCookie(
