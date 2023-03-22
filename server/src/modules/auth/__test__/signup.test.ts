@@ -10,7 +10,7 @@ describe('User signup test suite', () => {
   beforeEach(be);
   afterEach(ae);
 
-  it('Returns invalid input error with missing email or password', async () => {
+  it('Returns invalid input error when signing up with missing email or password', async () => {
     const res1 = await testServer.request.send({
       query: QUERIES.USER_SIGN_UP,
       variables: { input: { email: 'test@test.com' } },
@@ -23,18 +23,12 @@ describe('User signup test suite', () => {
 
     const res3 = await testServer.request.send({ query: QUERIES.USER_SIGN_UP });
 
-    expect(res1.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
-    expect(res2.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
-    expect(res3.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
+    expect(testServer.getErrorCodes(res1)).toContain(ERROR_CODES.INVALID_INPUT);
+    expect(testServer.getErrorCodes(res2)).toContain(ERROR_CODES.INVALID_INPUT);
+    expect(testServer.getErrorCodes(res3)).toContain(ERROR_CODES.INVALID_INPUT);
   });
 
-  it('Returns invalid input error with invalid email or password', async () => {
+  it('Returns invalid input error when signing up with invalid email or password', async () => {
     const res1 = await testServer.request.send({
       query: QUERIES.USER_SIGN_UP,
       variables: { input: { email: 'test@test.com', password: '123456' } },
@@ -55,15 +49,9 @@ describe('User signup test suite', () => {
       },
     });
 
-    expect(res1.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
-    expect(res2.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
-    expect(res3.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.INVALID_INPUT
-    );
+    expect(testServer.getErrorCodes(res1)).toContain(ERROR_CODES.INVALID_INPUT);
+    expect(testServer.getErrorCodes(res2)).toContain(ERROR_CODES.INVALID_INPUT);
+    expect(testServer.getErrorCodes(res3)).toContain(ERROR_CODES.INVALID_INPUT);
   });
 
   it('Success user signup and response body has user object', async () => {
@@ -110,8 +98,6 @@ describe('User signup test suite', () => {
       variables: { input: { email: 'test@test.com', password: '12345678' } },
     });
 
-    expect(res.body.errors[0].extensions.code).toEqual(
-      ERROR_CODES.EMAIL_IN_USE
-    );
+    expect(testServer.getErrorCodes(res)).toContain(ERROR_CODES.EMAIL_IN_USE);
   });
 });

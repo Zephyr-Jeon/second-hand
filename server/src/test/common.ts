@@ -29,6 +29,10 @@ class TestServer extends AppServer {
     return request(this._configs.SERVER_URL).post('/');
   }
 
+  getErrorCodes(res: request.Response) {
+    return res.body.errors.map((err: any) => err?.extensions?.code);
+  }
+
   async clearDB() {
     // this.db.dropDatabase();
     // this.db.synchronize();
