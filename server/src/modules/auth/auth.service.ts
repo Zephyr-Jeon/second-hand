@@ -1,7 +1,6 @@
 import { CookieOptions } from 'express';
 import { DI } from '../../di/DI';
 import { ICTX, IJWTPayload } from '../../types/interfaces';
-import { User } from '../user/user.entity';
 import { authSigninService } from './services/signin';
 import { authSignoutService } from './services/signout';
 import { authSignupService } from './services/signup';

@@ -15,6 +15,7 @@ import { IServerConfigs } from './config/config.interface';
 import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
 import { formatError } from './error/GQLError';
+import { AuthRule } from './modules/auth/AuthRule';
 import { SERVER_ENUMS } from './types/enums';
 import { ICTX, IJWTPayload } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
@@ -41,6 +42,14 @@ export class AppServer {
     });
   }
 
+  get db() {
+    return this._db;
+  }
+
+  get di() {
+    return this._di;
+  }
+
   async startServer() {
     console.log('Starting up.....');
 
@@ -60,14 +69,6 @@ export class AppServer {
   async stop() {
     await this._db.destroy();
     this.httpServer?.close?.();
-  }
-
-  get db() {
-    return this._db;
-  }
-
-  get di() {
-    return this._di;
   }
 
   private setDIs() {
@@ -153,6 +154,7 @@ export class AppServer {
       container: this._di.container,
       resolvers: this.configs.TYPEGQL_RESOLVERS,
       emitSchemaFile: this.configs.TYPEGQL_EMIT_SCHEMA_FILE,
+      authChecker: AuthRule,
     });
   }
 
