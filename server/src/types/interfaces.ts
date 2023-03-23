@@ -4,8 +4,7 @@ import { User } from '../modules/user/user.entity';
 export interface ICTX {
   req: Request;
   res: Response;
-  user?: User;
-  userId?: number;
+  user: User | null;
 }
 
 export interface IJWTPayload {

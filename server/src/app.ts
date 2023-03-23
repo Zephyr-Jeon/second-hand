@@ -4,6 +4,7 @@ import {
   expressMiddleware,
 } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -132,7 +133,7 @@ export class AppServer {
       formatError,
       plugins: [
         ApolloServerPluginDrainHttpServer({ httpServer }),
-        // ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
+        ApolloServerPluginLandingPageLocalDefault({ includeCookies: true }),
       ],
     });
 
@@ -166,7 +167,7 @@ export class AppServer {
     req,
     res,
   }: ExpressContextFunctionArgument): Promise<ICTX> {
-    const ctx: ICTX = { req, res };
+    const ctx: ICTX = { req, res, user: null };
     const token = req.signedCookies[this._di.serverEnums.COOKIE_NAMES.TOKEN];
 
     if (token) {
@@ -176,10 +177,10 @@ export class AppServer {
           this.configs.JWT_SECRET
         )) as IJWTPayload;
 
-        ctx.userId = payload.userId;
+        ctx.user = await this._di.getUserRepo.findOneBy({ id: payload.userId });
       } catch (e) {
         res.clearCookie(this._di.serverEnums.COOKIE_NAMES.TOKEN);
-        console.log(`Internal JWT verification error: ${e}`);
+        console.log(`Internal context creating error: ${e}`);
       }
     }
 
