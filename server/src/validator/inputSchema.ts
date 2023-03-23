@@ -1,18 +1,46 @@
 import { z } from 'zod';
 
+// TODO: move to app configs
+const MIN_PASSWORD_LENGTH = 8;
+const MAX_PASSWORD_LENGTH = 20;
+
 // sync zod schema with input classes of each module
 export const inputSchema = {
-  user: {
+  common: {
+    singleIDInput: z.object({
+      id: z.number(),
+    }),
+  },
+  auth: {
     signup: z.object({
       email: z.string().email({ message: 'Invalid email' }),
       password: z
         .string()
-        .min(8, { message: 'Password must longer than 8 charactors' })
-        .max(20, { message: 'Password length cannot exceed 20 characters' }),
+        .min(MIN_PASSWORD_LENGTH, {
+          message: 'Password must longer than 8 charactors',
+        })
+        .max(MAX_PASSWORD_LENGTH, {
+          message: 'Password length cannot exceed 20 characters',
+        }),
     }),
     signin: z.object({
       email: z.string().email(),
-      password: z.string().min(8).max(20),
+      password: z.string().min(MIN_PASSWORD_LENGTH).max(MAX_PASSWORD_LENGTH),
+    }),
+  },
+  user: {
+    update: z.object({
+      id: z.number(),
+      email: z.string().email({ message: 'Invalid email' }).optional(),
+      password: z
+        .string()
+        .min(MIN_PASSWORD_LENGTH, {
+          message: 'Password must longer than 8 charactors',
+        })
+        .max(MAX_PASSWORD_LENGTH, {
+          message: 'Password length cannot exceed 20 characters',
+        })
+        .optional(),
     }),
   },
 };

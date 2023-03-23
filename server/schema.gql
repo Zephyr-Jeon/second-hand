@@ -21,7 +21,8 @@ type OkResponse {
 }
 
 type Query {
-  getUserById(input: SingleIDInput!): User!
+  getCurrentUser: User!
+  getUserByID(input: SingleIDInput!): User!
   getUsers: [User!]!
 }
 

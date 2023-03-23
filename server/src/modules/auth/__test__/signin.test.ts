@@ -1,5 +1,5 @@
 import { ERROR_CODES } from '../../../error/ErrorCodes';
-import { aa, ae, ba, be, testServer } from '../../../test/common';
+import { aa, ae, ba, testServer } from '../../../test/common';
 import { QUERIES } from '../../../test/queries';
 import { IJWTPayload } from '../../../types/interfaces';
 
@@ -7,7 +7,6 @@ beforeAll(ba);
 afterAll(aa);
 
 describe('User signin test suite', () => {
-  beforeEach(be);
   afterEach(ae);
 
   it('Fails when an email that does not exist is supplied', async () => {

@@ -2,21 +2,29 @@ import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
 import { SigninInput, SignupInput } from '../modules/auth/auth.input';
+import { SingleIDInput } from '../modules/common/input';
+import { UpdateUserInput } from '../modules/user/user.input';
 import { inputSchema } from './inputSchema';
 
 export class Validator {
   private static inputSchema = inputSchema;
 
   static validateInput(input: unknown, inputType: unknown) {
-    const { user } = this.inputSchema;
+    const { common, auth, user } = this.inputSchema;
 
     try {
       switch (inputType) {
+        case SingleIDInput:
+          common.singleIDInput.parse(input);
+          break;
         case SignupInput:
-          user.signup.parse(input);
+          auth.signup.parse(input);
           break;
         case SigninInput:
-          user.signin.parse(input);
+          auth.signin.parse(input);
+          break;
+        case UpdateUserInput:
+          user.update.parse(input);
           break;
         default:
           throw new GQLError({ code: ERROR_CODES.INPUT_TYPE_UNDEFINED });

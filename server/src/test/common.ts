@@ -1,7 +1,10 @@
+import { randomBytes } from 'crypto';
+import request from 'supertest';
 import { AppServer } from '../app';
 import { IServerConfigs } from '../config/config.interface';
 import { getAppConfigs } from '../config/getAppConfigs';
-import request from 'supertest';
+import { User } from '../modules/user/user.entity';
+import { QUERIES } from './queries';
 
 export let testServer: TestServer;
 
@@ -25,6 +28,24 @@ class TestServer extends AppServer {
     super(_configs);
   }
 
+  // create random user that can request with token set in the header
+  async createUser() {
+    const email = `${randomBytes(8).toString('hex')}@test.com`;
+    const password = '12345678';
+
+    const res = await this.request.send({
+      query: QUERIES.USER_SIGN_UP,
+      variables: { input: { email, password } },
+    });
+
+    return new TestUser(
+      this,
+      [...res.header['set-cookie']],
+      res.body.data.signup
+    );
+  }
+
+  //  request without token set in the header
   get request() {
     return request(this._configs.SERVER_URL).post('/');
   }
@@ -47,10 +68,9 @@ class TestServer extends AppServer {
     });
   }
 
+  // TODO: Create and drop a new schema for each test to run test concurrently
   override async startServer() {
     await super.startServer();
-
-    // TODO: Create and drop a new schema for each test to run test concurrently
 
     // this.db.query('CREATE SCHEMA test');
 
@@ -68,5 +88,21 @@ class TestServer extends AppServer {
     // });
 
     // this.db.initialize();
+  }
+}
+
+class TestUser {
+  constructor(
+    private server: TestServer,
+    private cookie: any[],
+    private user: User
+  ) {}
+
+  get request() {
+    return this.server.request.set('Cookie', this.cookie);
+  }
+
+  get data() {
+    return this.user;
   }
 }

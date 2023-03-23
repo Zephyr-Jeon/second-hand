@@ -1,11 +1,10 @@
-import { aa, ae, ba, be, testServer } from '../../../test/common';
+import { aa, ae, ba, testServer } from '../../../test/common';
 import { QUERIES } from '../../../test/queries';
 
 beforeAll(ba);
 afterAll(aa);
 
 describe('User signout test suite', () => {
-  beforeEach(be);
   afterEach(ae);
 
   it('Clears the cookie after signing out', async () => {

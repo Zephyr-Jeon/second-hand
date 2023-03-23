@@ -1,8 +1,9 @@
 import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, InputType } from 'type-graphql';
+import { IUpdateUserInput } from '../../validator/inputTypes';
 
 @InputType()
-export class UpdateUserInput {
+export class UpdateUserInput implements IUpdateUserInput {
   @Field(() => GraphQLInt, { nullable: false })
   id!: number;
 
