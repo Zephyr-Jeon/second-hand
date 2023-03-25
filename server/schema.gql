@@ -3,10 +3,74 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+"""Category of item advertising"""
+enum AD_CATEGORY {
+  ARTS
+  AUDIO
+  BABY_ITEMS
+  BIKES
+  BOOKS
+  CAMERAS
+  CLOTHING
+  COLLECTABLES
+  COMPUTERS
+  CRAFTS
+  ELECTRONICS
+  FURNITURE
+  GARAGE_SALES
+  GARDEN
+  HEALTH
+  HOME_APPLIANCES
+  JEWELLERY
+  MUSICAL_INSTRUMENTS
+  OTHER
+  PHONES
+  SPORTS
+  TOOLS
+  TOYS
+}
+
+"""Status of ad (available, reserved, done)"""
+enum AD_STATUS {
+  AVAILABLE
+  DONE
+  RESERVED
+}
+
+"""Type of ad (buy, sell)"""
+enum AD_TYPE {
+  BUY
+  SELL
+}
+
+"""Ad for buy and sell"""
+type Ad {
+  category: [ItemCategory!]!
+  contact: String
+  createdAt: DateTime!
+  description: String!
+  id: Int!
+  location: String!
+  price: Int!
+  status: AD_STATUS!
+  title: String!
+  type: AD_TYPE!
+  updatedAt: DateTime!
+  user: User!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+"""Category of item"""
+type ItemCategory {
+  createdAt: DateTime!
+  id: Int!
+  type: AD_CATEGORY!
+  updatedAt: DateTime!
+}
 
 type Mutation {
   signin(input: SigninInput!): User!
@@ -50,6 +114,7 @@ input UpdateUserInput {
 
 """General End User"""
 type User {
+  ads: [Ad!]!
   createdAt: DateTime!
   email: String!
   id: Int!

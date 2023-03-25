@@ -11,20 +11,22 @@ import { ICommonEntity } from './interfaces';
 
 // Common entity that most entities inherent
 @ObjectType({ isAbstract: true }) // to prevent getting registered in the schema
-export class CommonEntity extends BaseEntity implements ICommonEntity {
+export abstract class CommonEntity extends BaseEntity implements ICommonEntity {
   utils = DI.utils;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: false })
   @CreateDateColumn({
     type: 'timestamp with time zone',
     comment: 'created time',
+    nullable: false,
   })
   createdAt!: Date;
 
-  @Field(() => Date)
+  @Field(() => Date, { nullable: false })
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     comment: 'updated time',
+    nullable: false,
   })
   updatedAt!: Date;
 

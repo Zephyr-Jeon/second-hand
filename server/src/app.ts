@@ -16,7 +16,7 @@ import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
 import { formatError } from './error/GQLError';
 import { AuthRule } from './modules/auth/AuthRule';
-import { SERVER_ENUMS } from './types/enums';
+import { registerAppEnums, SERVER_ENUMS } from './types/enums';
 import { ICTX, IJWTPayload } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
 import { Validator } from './validator/Validator';
@@ -54,6 +54,8 @@ export class AppServer {
     console.log('Starting up.....');
 
     this.setDIs();
+
+    registerAppEnums();
 
     await this.initDB();
 

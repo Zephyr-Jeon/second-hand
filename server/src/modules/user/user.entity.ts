@@ -1,15 +1,16 @@
-import { GraphQLInt } from 'graphql';
+import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, ObjectType } from 'type-graphql';
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { INDEX_FIELDS, INDEX_NAMES } from '../../db/indices';
+import { Ad } from '../ad/ad.entity';
 import { CommonEntity } from '../common/CommonEntity';
-import { ICommonEntity } from '../common/interfaces';
-
-interface IUser extends ICommonEntity {
-  id: number;
-  email: string;
-  password: string;
-}
+import { IUser } from './user.interfaces';
 
 @Entity()
 @ObjectType({ description: 'General End User' })
@@ -17,14 +18,18 @@ interface IUser extends ICommonEntity {
   unique: true,
 })
 export class User extends CommonEntity implements IUser {
-  @Field(() => GraphQLInt)
-  @PrimaryGeneratedColumn()
+  @Field(() => GraphQLInt, { nullable: false })
+  @PrimaryGeneratedColumn({ type: 'int' })
   readonly id!: number;
 
-  @Field()
-  @Column()
+  @Field(() => GraphQLString, { nullable: false })
+  @Column('varchar', { nullable: false })
   email!: string;
 
-  @Column()
+  @Column('varchar', { nullable: false })
   password!: string;
+
+  @Field(() => [Ad], { nullable: false })
+  @OneToMany(() => Ad, (ad) => ad.user)
+  ads!: Ad[];
 }
