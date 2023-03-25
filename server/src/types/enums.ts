@@ -24,7 +24,7 @@ export const registerAppEnums = () => {
     description: 'Status of ad (available, reserved, done)',
   });
   registerEnumType(ITEM_CATEGORY, {
-    name: 'AD_CATEGORY',
+    name: 'ITEM_CATEGORY',
     description: 'Category of item advertising',
   });
 };

@@ -63,7 +63,7 @@ class TestServer extends AppServer {
 
       // RESTART IDENTITY reset all identity columns when truncating a table
       await repo.query(
-        `TRUNCATE "${entity.name.toLowerCase()}" RESTART IDENTITY CASCADE;`
+        `TRUNCATE "${entity.tableName}" RESTART IDENTITY CASCADE;`
       );
     });
   }

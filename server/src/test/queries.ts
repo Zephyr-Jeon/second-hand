@@ -33,8 +33,8 @@ query GetCurrentUser {
 `;
 
 const GQL_GET_USER_BY_ID = `
-query GetUserByID($input: SingleIDInput!) {
-  getUserByID(input: $input) {
+query GetUserById($input: SingleIdInput!) {
+  getUserById(input: $input) {
     ${SNAPSHOTS.USER_FULL_SNAPSHOT}
   }
 }

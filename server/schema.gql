@@ -3,33 +3,6 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-"""Category of item advertising"""
-enum AD_CATEGORY {
-  ARTS
-  AUDIO
-  BABY_ITEMS
-  BIKES
-  BOOKS
-  CAMERAS
-  CLOTHING
-  COLLECTABLES
-  COMPUTERS
-  CRAFTS
-  ELECTRONICS
-  FURNITURE
-  GARAGE_SALES
-  GARDEN
-  HEALTH
-  HOME_APPLIANCES
-  JEWELLERY
-  MUSICAL_INSTRUMENTS
-  OTHER
-  PHONES
-  SPORTS
-  TOOLS
-  TOYS
-}
-
 """Status of ad (available, reserved, done)"""
 enum AD_STATUS {
   AVAILABLE
@@ -64,11 +37,38 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
+"""Category of item advertising"""
+enum ITEM_CATEGORY {
+  ARTS
+  AUDIO
+  BABY_ITEMS
+  BIKES
+  BOOKS
+  CAMERAS
+  CLOTHING
+  COLLECTABLES
+  COMPUTERS
+  CRAFTS
+  ELECTRONICS
+  FURNITURE
+  GARAGE_SALES
+  GARDEN
+  HEALTH
+  HOME_APPLIANCES
+  JEWELLERY
+  MUSICAL_INSTRUMENTS
+  OTHER
+  PHONES
+  SPORTS
+  TOOLS
+  TOYS
+}
+
 """Category of item"""
 type ItemCategory {
   createdAt: DateTime!
   id: Int!
-  type: AD_CATEGORY!
+  type: ITEM_CATEGORY!
   updatedAt: DateTime!
 }
 
@@ -76,6 +76,7 @@ type Mutation {
   signin(input: SigninInput!): User!
   signout: OkResponse!
   signup(input: SignupInput!): User!
+  updateAd(input: UpdateAdInput!): Ad!
   updateUser(input: UpdateUserInput!): User!
 }
 
@@ -85,9 +86,13 @@ type OkResponse {
 }
 
 type Query {
+  createAd(input: SingleIdInput!): Ad!
+  getAdById(input: SingleIdInput!): Ad!
+  getAdList: [Ad!]!
   getCurrentUser: User!
-  getUserByID(input: SingleIDInput!): User!
+  getUserById(input: SingleIdInput!): User!
   getUsers: [User!]!
+  removeAd(input: SingleIdInput!): Ad!
 }
 
 input SigninInput {
@@ -100,10 +105,16 @@ input SignupInput {
   password: String!
 }
 
-"""Single ID input"""
-input SingleIDInput {
+"""Single id input"""
+input SingleIdInput {
   """ID"""
   id: Int!
+}
+
+input UpdateAdInput {
+  email: String
+  id: Int!
+  password: String
 }
 
 input UpdateUserInput {
@@ -114,7 +125,6 @@ input UpdateUserInput {
 
 """General End User"""
 type User {
-  ads: [Ad!]!
   createdAt: DateTime!
   email: String!
   id: Int!

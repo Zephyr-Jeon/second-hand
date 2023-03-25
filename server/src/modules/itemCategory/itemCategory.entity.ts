@@ -5,7 +5,7 @@ import { CommonEntity } from '../common/CommonEntity';
 import { ITEM_CATEGORY } from './itemCategory.enums';
 import { IItemCategory } from './itemCategory.interfaces';
 
-@Entity()
+@Entity({ name: 'item_categories' })
 @ObjectType({ description: 'Category of item' })
 export class ItemCategory extends CommonEntity implements IItemCategory {
   @Field(() => GraphQLInt, { nullable: false })

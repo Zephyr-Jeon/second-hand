@@ -7,7 +7,7 @@ const MAX_PASSWORD_LENGTH = 20;
 // sync zod schema with input classes of each module
 export const inputSchema = {
   common: {
-    singleIDInput: z.object({
+    singleIdInput: z.object({
       id: z.number(),
     }),
   },

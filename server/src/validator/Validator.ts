@@ -2,7 +2,7 @@ import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
 import { SigninInput, SignupInput } from '../modules/auth/auth.input';
-import { SingleIDInput } from '../modules/common/input';
+import { SingleIdInput } from '../modules/common/input';
 import { UpdateUserInput } from '../modules/user/user.input';
 import { inputSchema } from './inputSchema';
 
@@ -14,8 +14,8 @@ export class Validator {
 
     try {
       switch (inputType) {
-        case SingleIDInput:
-          common.singleIDInput.parse(input);
+        case SingleIdInput:
+          common.singleIdInput.parse(input);
           break;
         case SignupInput:
           auth.signup.parse(input);

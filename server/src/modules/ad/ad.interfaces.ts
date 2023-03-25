@@ -1,5 +1,5 @@
-import { ItemCategory } from '../itemCategory/itemCategory.entity';
 import { ICommonEntity } from '../common/interfaces';
+import { ItemCategory } from '../itemCategory/itemCategory.entity';
 import { User } from '../user/user.entity';
 import { AD_STATUS, AD_TYPE } from './ad.enums';
 

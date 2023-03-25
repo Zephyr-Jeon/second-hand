@@ -5,7 +5,7 @@ import { QUERIES } from '../../../test/queries';
 beforeAll(ba);
 afterAll(aa);
 
-describe('Get user by ID', () => {
+describe('Get user by id', () => {
   afterEach(ae);
 
   it('Returns error when the user of given id does not exist ', async () => {
@@ -31,6 +31,6 @@ describe('Get user by ID', () => {
       variables: { input: { id: res.body.data.signup.id } },
     });
 
-    expect(res2.body.data.getUserByID).toMatchObject({ email });
+    expect(res2.body.data.getUserById).toMatchObject({ email });
   });
 });

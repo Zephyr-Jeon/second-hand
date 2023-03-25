@@ -2,7 +2,7 @@ import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from 'type-graphql';
 import { DI } from '../../di/DI';
 import { ICTX } from '../../types/interfaces';
 import { AuthRule } from '../auth/AuthRule';
-import { SingleIDInput } from '../common/input';
+import { SingleIdInput } from '../common/input';
 import { User } from './user.entity';
 import { UpdateUserInput } from './user.input';
 import { UserService } from './user.service';
@@ -20,7 +20,7 @@ export class UserResolver {
 
   @Authorized(AuthRule.public)
   @Query((returns) => User)
-  async getUserByID(@Arg('input') input: SingleIDInput, @Ctx() ctx: ICTX) {
+  async getUserById(@Arg('input') input: SingleIdInput, @Ctx() ctx: ICTX) {
     const user = await this.userService.findOneById(input.id);
     return user;
   }

@@ -8,13 +8,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ItemCategory } from '../itemCategory/itemCategory.entity';
 import { CommonEntity } from '../common/CommonEntity';
+import { ItemCategory } from '../itemCategory/itemCategory.entity';
 import { User } from '../user/user.entity';
 import { AD_STATUS, AD_TYPE } from './ad.enums';
 import { IAd } from './ad.interfaces';
 
-@Entity()
+@Entity({ name: 'ads' })
 @ObjectType({ description: 'Ad for buy and sell' })
 export class Ad extends CommonEntity implements IAd {
   @Field(() => GraphQLInt, { nullable: false })
@@ -22,7 +22,7 @@ export class Ad extends CommonEntity implements IAd {
   readonly id!: number;
 
   @Field(() => User, { nullable: false })
-  @ManyToOne(() => User, (user) => user.ads)
+  @ManyToOne(() => User)
   user!: User;
 
   @Field(() => GraphQLString, { nullable: false })

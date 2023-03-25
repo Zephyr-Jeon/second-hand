@@ -1,10 +1,10 @@
 import { IsInt } from 'class-validator';
 import { GraphQLInt } from 'graphql';
 import { InputType, Field } from 'type-graphql';
-import { ISingleIDInput } from '../../validator/inputTypes';
+import { ISingleIdInput } from '../../validator/inputTypes';
 
-@InputType({ description: 'Single ID input' })
-export class SingleIDInput implements ISingleIDInput {
+@InputType({ description: 'Single id input' })
+export class SingleIdInput implements ISingleIdInput {
   @IsInt()
   @Field(() => GraphQLInt, { description: 'ID', nullable: false })
   id!: number;
