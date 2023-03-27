@@ -6,7 +6,7 @@
 """Status of ad (available, reserved, done)"""
 enum AD_STATUS {
   AVAILABLE
-  DONE
+  COMPLETE
   RESERVED
 }
 
@@ -18,7 +18,7 @@ enum AD_TYPE {
 
 """Ad for buy and sell"""
 type Ad {
-  category: [ItemCategory!]!
+  categories: [ItemCategory!]!
   contact: String
   createdAt: DateTime!
   description: String!
@@ -32,10 +32,24 @@ type Ad {
   user: User!
 }
 
+input CreateAdInput {
+  categories: [ITEM_CATEGORY!]!
+  contact: String
+  description: String!
+  location: String!
+  price: Int!
+  title: String!
+  type: AD_TYPE!
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
 scalar DateTime
+
+input GetAdListInput {
+  id: Int!
+}
 
 """Category of item advertising"""
 enum ITEM_CATEGORY {
@@ -68,11 +82,13 @@ enum ITEM_CATEGORY {
 type ItemCategory {
   createdAt: DateTime!
   id: Int!
-  type: ITEM_CATEGORY!
+  name: ITEM_CATEGORY!
   updatedAt: DateTime!
 }
 
 type Mutation {
+  createAd(input: CreateAdInput!): Ad!
+  removeAd(input: SingleIdInput!): OkResponse!
   signin(input: SigninInput!): User!
   signout: OkResponse!
   signup(input: SignupInput!): User!
@@ -86,13 +102,11 @@ type OkResponse {
 }
 
 type Query {
-  createAd(input: SingleIdInput!): Ad!
   getAdById(input: SingleIdInput!): Ad!
-  getAdList: [Ad!]!
+  getAdList(input: GetAdListInput!): [Ad!]!
   getCurrentUser: User!
   getUserById(input: SingleIdInput!): User!
   getUsers: [User!]!
-  removeAd(input: SingleIdInput!): Ad!
 }
 
 input SigninInput {
@@ -112,9 +126,15 @@ input SingleIdInput {
 }
 
 input UpdateAdInput {
-  email: String
+  categories: [ITEM_CATEGORY!]
+  contact: String
+  description: String
   id: Int!
-  password: String
+  location: String
+  price: Int
+  status: AD_STATUS
+  title: String
+  type: AD_TYPE
 }
 
 input UpdateUserInput {

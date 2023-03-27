@@ -10,7 +10,7 @@ export interface IAd extends ICommonEntity {
   description: string;
   status: AD_STATUS;
   type: AD_TYPE;
-  category: ItemCategory[];
+  categories: ItemCategory[];
   price: number;
   location: string;
   contact?: string;

@@ -6,5 +6,5 @@ export enum AD_TYPE {
 export enum AD_STATUS {
   AVAILABLE = 'AVAILABLE',
   RESERVED = 'RESERVED',
-  DONE = 'DONE',
+  COMPLETE = 'COMPLETE',
 }

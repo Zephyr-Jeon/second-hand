@@ -1,6 +1,7 @@
 import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
+import { CreateAdInput, UpdateAdInput } from '../modules/ad/ad.input';
 import { SigninInput, SignupInput } from '../modules/auth/auth.input';
 import { SingleIdInput } from '../modules/common/input';
 import { UpdateUserInput } from '../modules/user/user.input';
@@ -10,19 +11,28 @@ export class Validator {
   private static inputSchema = inputSchema;
 
   static validateInput(input: unknown, inputType: unknown) {
-    const { common, auth, user } = this.inputSchema;
+    const { common, ad, auth, user } = this.inputSchema;
 
     try {
       switch (inputType) {
         case SingleIdInput:
           common.singleIdInput.parse(input);
           break;
+        // Ad
+        case CreateAdInput:
+          ad.createAd.parse(input);
+          break;
+        case UpdateAdInput:
+          ad.updateAd.parse(input);
+          break;
+        // Auth
         case SignupInput:
           auth.signup.parse(input);
           break;
         case SigninInput:
           auth.signin.parse(input);
           break;
+        // User
         case UpdateUserInput:
           user.update.parse(input);
           break;

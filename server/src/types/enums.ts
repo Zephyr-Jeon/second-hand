@@ -3,15 +3,24 @@ import { AD_TYPE, AD_STATUS } from '../modules/ad/ad.enums';
 import { ITEM_CATEGORY } from '../modules/itemCategory/itemCategory.enums';
 
 export interface I_SERVER_ENUMS {
-  COOKIE_NAMES: { [key in COOKIE_NAMES]: COOKIE_NAMES };
+  COOKIE_NAMES: { [key in keyof typeof COOKIE_NAMES]: COOKIE_NAMES };
+  TABLE_NAMES: { [key in keyof typeof TABLE_NAMES]: TABLE_NAMES };
 }
 
 enum COOKIE_NAMES {
   TOKEN = 'TOKEN',
 }
 
+export enum TABLE_NAMES {
+  AD = 'ads',
+  AD_HAS_ITEM_CATEGORY = 'ads_has_item_categories',
+  ITEM_CATEGORY = 'item_categories',
+  USER = 'users',
+}
+
 export const SERVER_ENUMS: I_SERVER_ENUMS = {
   COOKIE_NAMES,
+  TABLE_NAMES,
 };
 
 export const registerAppEnums = () => {

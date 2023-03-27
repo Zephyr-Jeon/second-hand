@@ -2,10 +2,11 @@ import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, ObjectType } from 'type-graphql';
 import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 import { INDEX_FIELDS, INDEX_NAMES } from '../../db/indices';
+import { TABLE_NAMES } from '../../types/enums';
 import { CommonEntity } from '../common/CommonEntity';
 import { IUser } from './user.interfaces';
 
-@Entity({ name: 'users' })
+@Entity({ name: TABLE_NAMES.USER })
 @ObjectType({ description: 'General End User' })
 @Index(INDEX_NAMES.UX_USER_EMAIL, INDEX_FIELDS[INDEX_NAMES.UX_USER_EMAIL], {
   unique: true,

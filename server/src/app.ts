@@ -16,6 +16,7 @@ import { DI } from './di/DI';
 import { DI_KEYS } from './di/DIKeys';
 import { formatError } from './error/GQLError';
 import { AuthRule } from './modules/auth/AuthRule';
+import { ItemCategoryService } from './modules/itemCategory/itemCategory.service';
 import { registerAppEnums, SERVER_ENUMS } from './types/enums';
 import { ICTX, IJWTPayload } from './types/interfaces';
 import { ServerCommonUtils } from './utils/utils';
@@ -88,6 +89,10 @@ export class AppServer {
         await this._db.initialize();
 
         console.log('Data Source has been initialized');
+
+        await ItemCategoryService.createInitialData();
+
+        console.log('Initial data created');
 
         break;
       } catch (err) {
