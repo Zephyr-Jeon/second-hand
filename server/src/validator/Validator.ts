@@ -1,7 +1,11 @@
 import { ZodError } from 'zod';
 import { ERROR_CODES } from '../error/ErrorCodes';
 import { GQLError } from '../error/GQLError';
-import { CreateAdInput, UpdateAdInput } from '../modules/ad/ad.input';
+import {
+  CreateAdInput,
+  GetPaginatedListOfAdsInput,
+  UpdateAdInput,
+} from '../modules/ad/ad.input';
 import { SigninInput, SignupInput } from '../modules/auth/auth.input';
 import { SingleIdInput } from '../modules/common/input';
 import { UpdateUserInput } from '../modules/user/user.input';
@@ -24,6 +28,9 @@ export class Validator {
           break;
         case UpdateAdInput:
           ad.updateAd.parse(input);
+          break;
+        case GetPaginatedListOfAdsInput:
+          ad.getPaginatedListOfAds.parse(input);
           break;
         // Auth
         case SignupInput:

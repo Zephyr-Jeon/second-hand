@@ -5,7 +5,11 @@ import { AuthRule } from '../auth/AuthRule';
 import { SingleIdInput } from '../common/input';
 import { OkResponse } from '../common/output';
 import { Ad } from './ad.entity';
-import { CreateAdInput, GetAdListInput, UpdateAdInput } from './ad.input';
+import {
+  CreateAdInput,
+  GetPaginatedListOfAdsInput,
+  UpdateAdInput,
+} from './ad.input';
 import { AdService } from './ad.service';
 
 @DI.register()
@@ -35,12 +39,15 @@ export class AdResolver {
   @Authorized(AuthRule.public)
   @Query((returns) => Ad)
   async getAdById(@Arg('input') input: SingleIdInput, @Ctx() ctx: ICTX) {
-    return await this.adService.findOneById(input.id);
+    return await this.adService.getOneById(input.id);
   }
 
   @Authorized(AuthRule.public)
   @Query((returns) => [Ad])
-  async getAdList(@Arg('input') input: GetAdListInput, @Ctx() ctx: ICTX) {
-    return await this.adService.find(input, ctx);
+  async getPaginatedListOfAds(
+    @Arg('input') input: GetPaginatedListOfAdsInput,
+    @Ctx() ctx: ICTX
+  ) {
+    return await this.adService.getPaginatedList(input);
   }
 }

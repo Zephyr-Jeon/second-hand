@@ -49,7 +49,7 @@ export class Ad extends CommonEntity implements IAd {
   type!: AD_TYPE;
 
   @Field(() => [ItemCategory], { nullable: false })
-  @ManyToMany(() => ItemCategory, { nullable: false })
+  @ManyToMany(() => ItemCategory, { nullable: false, eager: true })
   @JoinTable({ name: TABLE_NAMES.AD_HAS_ITEM_CATEGORY })
   categories!: ItemCategory[];
 

@@ -1,6 +1,11 @@
 import { GraphQLInt, GraphQLString } from 'graphql';
 import { Field, InputType } from 'type-graphql';
-import { ICreateAdInput, IUpdateAdInput } from '../../validator/inputTypes';
+import {
+  ICreateAdInput,
+  IGetPaginatedListOfAdsInput,
+  IUpdateAdInput,
+} from '../../validator/inputTypes';
+import { PaginatedListInput } from '../common/input';
 import { ITEM_CATEGORY } from '../itemCategory/itemCategory.enums';
 import { AD_STATUS, AD_TYPE } from './ad.enums';
 
@@ -42,6 +47,9 @@ export class UpdateAdInput implements IUpdateAdInput {
   @Field(() => AD_TYPE, { nullable: true })
   type?: AD_TYPE;
 
+  @Field(() => AD_STATUS, { nullable: true })
+  status?: AD_STATUS;
+
   @Field(() => [ITEM_CATEGORY], { nullable: true })
   categories?: ITEM_CATEGORY[];
 
@@ -53,13 +61,31 @@ export class UpdateAdInput implements IUpdateAdInput {
 
   @Field(() => GraphQLString, { nullable: true })
   contact?: string;
-
-  @Field(() => AD_STATUS, { nullable: true })
-  status?: AD_STATUS;
 }
 
 @InputType()
-export class GetAdListInput {
-  @Field(() => GraphQLInt, { nullable: false })
-  id!: number;
+export class GetPaginatedListOfAdsInput
+  extends PaginatedListInput
+  implements IGetPaginatedListOfAdsInput
+{
+  @Field(() => GraphQLString, { nullable: true })
+  keyword?: string;
+
+  @Field(() => AD_TYPE, { nullable: true })
+  type?: AD_TYPE;
+
+  @Field(() => AD_STATUS, { nullable: true })
+  status?: AD_STATUS;
+
+  @Field(() => [ITEM_CATEGORY], { nullable: true })
+  categories?: ITEM_CATEGORY[];
+
+  @Field(() => GraphQLInt, { nullable: true })
+  minPrice?: number;
+
+  @Field(() => GraphQLInt, { nullable: true })
+  maxPrice?: number;
+
+  @Field(() => GraphQLString, { nullable: true })
+  location?: string;
 }

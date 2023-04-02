@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { AD_STATUS, AD_TYPE } from '../modules/ad/ad.enums';
+import { PaginatedListInput } from '../modules/common/input';
 import { ITEM_CATEGORY } from '../modules/itemCategory/itemCategory.enums';
 
 // TODO: move to app configs
@@ -9,11 +10,20 @@ const MIN_NUM_OF_ITEM_CATEGORIES_OF_AD = 1;
 const MAX_NUM_OF_ITEM_CATEGORIES_OF_AD = 3;
 
 // sync zod schema with input classes of each module
+const commonInputSchema = {
+  singleIdInput: {
+    id: z.number(),
+  },
+  paginatedListInput: {
+    page: z.number().min(1),
+    pageSize: z.number().min(1).max(1000),
+  },
+};
+
 export const inputSchema = {
   common: {
-    singleIdInput: z.object({
-      id: z.number(),
-    }),
+    singleIdInput: z.object(commonInputSchema.singleIdInput),
+    paginatedListInput: z.object(commonInputSchema.paginatedListInput),
   },
   ad: {
     createAd: z.object({
@@ -42,6 +52,20 @@ export const inputSchema = {
       price: z.number().min(0).optional(),
       location: z.string().optional(),
       contact: z.string().nullable().optional(),
+    }),
+    getPaginatedListOfAds: z.object({
+      ...commonInputSchema.paginatedListInput,
+      keyword: z.string().optional(),
+      type: z.nativeEnum(AD_TYPE).optional(),
+      status: z.nativeEnum(AD_STATUS).optional(),
+      categories: z
+        .array(z.nativeEnum(ITEM_CATEGORY))
+        .min(MIN_NUM_OF_ITEM_CATEGORIES_OF_AD)
+        .max(MAX_NUM_OF_ITEM_CATEGORIES_OF_AD)
+        .optional(),
+      minPrice: z.number().min(0).optional(),
+      maxPrice: z.number().min(0).optional(),
+      location: z.string().optional(),
     }),
   },
   auth: {

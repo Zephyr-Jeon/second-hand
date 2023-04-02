@@ -1,13 +1,16 @@
 import { DI } from '../../di/DI';
 import { ERROR_CODES } from '../../error/ErrorCodes';
 import { GQLError } from '../../error/GQLError';
-import { TABLE_NAMES } from '../../types/enums';
 import { ICTX } from '../../types/interfaces';
 import { CommonResponse } from '../common/CommonResponse';
 import { ICommonEntity } from '../common/interfaces';
 import { ItemCategory } from '../itemCategory/itemCategory.entity';
 import { ITEM_CATEGORY } from '../itemCategory/itemCategory.enums';
-import { CreateAdInput, GetAdListInput, UpdateAdInput } from './ad.input';
+import {
+  CreateAdInput,
+  GetPaginatedListOfAdsInput,
+  UpdateAdInput,
+} from './ad.input';
 import { IAd } from './ad.interfaces';
 
 @DI.register()
@@ -75,34 +78,87 @@ export class AdService {
     return CommonResponse.ok();
   }
 
-  async findOneById(id: number) {
-    const res = await this.adRepo.findOneBy({ id: 1 });
-    res!.categories = res!.categories ?? [ITEM_CATEGORY.ARTS];
-    return res;
+  async getOneById(id: number) {
+    const ad = await this.adRepo.findOneBy({ id });
+
+    if (!ad) {
+      return new GQLError({ code: ERROR_CODES.NOT_FOUND });
+    }
+
+    return ad;
   }
 
-  async find(input: GetAdListInput, ctx: ICTX) {
-    const test = await this.adRepo.findOneBy({ id: input.id });
-    const test2 = await this.adRepo.findOne({
-      relations: {
-        categories: true,
-      },
-      where: {
-        id: input.id,
-      },
-    });
+  async getPaginatedList(input: GetPaginatedListOfAdsInput) {
+    const {
+      page,
+      pageSize,
+      keyword,
+      categories,
+      location,
+      minPrice,
+      maxPrice,
+      status,
+      type,
+    } = input;
 
-    const test3 = await this.adRepo
-      .createQueryBuilder(TABLE_NAMES.AD)
-      .leftJoin(`${TABLE_NAMES.AD}.categories`, `categories`)
-      // .where( { id: input.id })
-      .where('ads.id = :id', { id: input.id })
-      .getOne();
+    const keywordFilter = `WHERE ads."title" LIKE '%${keyword ?? ''}%'`;
+    const typeFilter = type ? `AND ads."type" IN ('${type}')` : ``;
+    const statusFilter = status ? `AND ads."status" IN ('${status}')` : ``;
+    const minPriceFilter =
+      minPrice === undefined ? `` : `AND ads."price" >= ${minPrice}`;
+    const maxPriceFilter =
+      maxPrice === undefined ? `` : `AND ads."price" <= ${maxPrice}`;
 
-    console.log(74, test);
-    console.log(75, test2);
-    console.log(76, test3);
-    return [test!];
+    const categoryFilter = () => {
+      if (!categories || categories.length === 0) {
+        return ``;
+      }
+
+      return `
+              AND 
+                (
+                  ${categories.map(
+                    (category, index) =>
+                      `${
+                        index !== 0 ? 'OR ' : ``
+                      }joinedAhic."categories"::jsonb @> '[{"name": "${category}"}]'`
+                  )}
+                )
+             `;
+    };
+
+    const query = `
+      WITH 
+        joinedAhic AS
+        (
+          SELECT ahic."adsId", json_agg(ic) AS categories
+          FROM ads_has_item_categories AS ahic
+          INNER JOIN item_categories AS ic ON ic."id" = ahic."itemCategoriesId"
+          GROUP BY ahic."adsId"
+        ),
+        joinedAds AS
+        (
+          SELECT ads.*, to_json(users) AS "user", joinedAhic."categories"
+          FROM ads  
+          INNER JOIN users ON users."id" = ads."userId" 
+          INNER JOIN joinedAhic ON joinedAhic."adsId" = ads."id"
+          ${keywordFilter}
+          ${typeFilter}
+          ${statusFilter}
+          ${minPriceFilter}
+          ${maxPriceFilter}
+          ${categoryFilter()}
+          ORDER BY ads."createdAt" DESC
+          OFFSET ${pageSize * (page - 1)}
+          LIMIT ${pageSize}
+        )
+
+      SELECT * FROM joinedAds;
+    `;
+
+    const ads = await this.adRepo.query(query);
+
+    return ads;
   }
 
   // convert ITEM_CATEGORY[] to ItemCatrgory[]

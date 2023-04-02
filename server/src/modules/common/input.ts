@@ -9,3 +9,17 @@ export class SingleIdInput implements ISingleIdInput {
   @Field(() => GraphQLInt, { description: 'ID', nullable: false })
   id!: number;
 }
+
+@InputType({ description: 'Input for pagenated list' })
+export class PaginatedListInput {
+  @IsInt()
+  @Field(() => GraphQLInt, { description: 'Page number', nullable: false })
+  page!: number;
+
+  @IsInt()
+  @Field(() => GraphQLInt, {
+    description: 'Number of items in each page',
+    nullable: false,
+  })
+  pageSize!: number;
+}

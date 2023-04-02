@@ -47,8 +47,20 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 """
 scalar DateTime
 
-input GetAdListInput {
-  id: Int!
+input GetPaginatedListOfAdsInput {
+  categories: [ITEM_CATEGORY!]
+  keyword: String
+  location: String
+  maxPrice: Int
+  minPrice: Int
+
+  """Page number"""
+  page: Int!
+
+  """Number of items in each page"""
+  pageSize: Int!
+  status: AD_STATUS
+  type: AD_TYPE
 }
 
 """Category of item advertising"""
@@ -101,10 +113,19 @@ type OkResponse {
   ok: Float!
 }
 
+"""Input for pagenated list"""
+input PaginatedListInput {
+  """Page number"""
+  page: Int!
+
+  """Number of items in each page"""
+  pageSize: Int!
+}
+
 type Query {
   getAdById(input: SingleIdInput!): Ad!
-  getAdList(input: GetAdListInput!): [Ad!]!
   getCurrentUser: User!
+  getPaginatedListOfAds(input: GetPaginatedListOfAdsInput!): [Ad!]!
   getUserById(input: SingleIdInput!): User!
   getUsers: [User!]!
 }
